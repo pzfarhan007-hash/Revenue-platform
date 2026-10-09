@@ -1,0 +1,18 @@
+[
+  {
+    "username": "patwari_zalpora",
+    "password_hash": "$2b$12$REPLACE_WITH_BCRYPT_HASH_OF_LOGIN_PIN",
+    "village": "Zalpora",
+    "sheet_id": "GOOGLE_SHEET_ID_FOR_ZALPORA",
+    "sync_pin_hash": "$2b$12$REPLACE_WITH_BCRYPT_HASH_OF_SYNC_PIN",
+    "role": "editor"
+  },
+  {
+    "username": "patwari_nugam",
+    "password_hash": "$2b$12$REPLACE_WITH_BCRYPT_HASH_OF_LOGIN_PIN",
+    "village": "Nugam",
+    "sheet_id": "GOOGLE_SHEET_ID_FOR_NUGAM",
+    "sync_pin_hash": "$2b$12$REPLACE_WITH_BCRYPT_HASH_OF_SYNC_PIN",
+    "role": "editor"
+  }
+]

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: village-portal
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 2 --threads 4 --timeout 60
+    healthCheckPath: /healthz
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_PIN
+        sync: false        # set in dashboard — your admin login PIN
+      - key: MASTER_USERS_SHEET_ID
+        sync: false        # Google Sheet ID of the "Users" master sheet
+      - key: GOOGLE_SERVICE_ACCOUNT_JSON
+        sync: false        # paste the full service-account JSON

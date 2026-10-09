@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin — Patwari Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600&family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a2540; --slate: #2b3341; --paper: #faf5e6;
+    --accent: #a04e3a; --rule: #d9d2c1; --bone: #f4f1ea;
+    --text-soft: #5a6478; --danger: #b03a2e; --ok: #2a6b3e;
+    --ok-soft: #d4edda; --warn-soft: #fff8e1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    min-height: 100%; font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bone); color: var(--ink); -webkit-font-smoothing: antialiased;
+  }
+  header.topbar {
+    background: var(--slate); color: #f4f1ea; padding: 12px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 3px solid var(--accent); position: sticky; top: 0; z-index: 20;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand-mark { font-family: 'Fraunces', serif; font-weight: 600; font-size: 19px; }
+  .brand-sub { font-size: 11px; color: #b8bfc9; letter-spacing: 0.04em; text-transform: uppercase; }
+  .user-area { display: flex; align-items: center; gap: 12px; font-size: 12.5px; }
+  .user-area .label { color: #b8bfc9; }
+  .user-area a {
+    color: #f4f1ea; text-decoration: none; background: rgba(255,255,255,0.08);
+    padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 500;
+  }
+
+  .page { max-width: 980px; margin: 24px auto; padding: 0 20px 60px; }
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px;
+    color: var(--ink); margin-bottom: 4px;
+  }
+  .page-sub { color: var(--text-soft); font-size: 13px; margin-bottom: 20px; }
+
+  .flashes { margin-bottom: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .flash {
+    padding: 10px 14px; border-radius: 6px; font-size: 13px; line-height: 1.5;
+    border: 1px solid transparent;
+  }
+  .flash.ok    { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+  .flash.error { background: #f8d7da; border-color: var(--danger); color: var(--danger); }
+
+  .svc-banner {
+    background: #fff; border: 1px solid var(--rule); border-left: 4px solid var(--accent);
+    border-radius: 6px; padding: 12px 16px; margin-bottom: 20px; font-size: 12.5px;
+    color: var(--text-soft); line-height: 1.6;
+  }
+  .svc-banner code {
+    background: var(--bone); padding: 2px 6px; border-radius: 3px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
+    color: var(--ink); user-select: all;
+  }
+
+  .panel {
+    background: #fff; border: 1px solid var(--rule); border-radius: 8px;
+    margin-bottom: 18px; overflow: hidden;
+  }
+  .panel-head {
+    background: #f6f2e6; padding: 10px 16px; border-bottom: 1px solid var(--rule);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .panel-head h2 {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 15.5px; color: var(--ink);
+  }
+  .panel-head .ur {
+    font-family: 'Noto Nastaliq Urdu', serif; font-size: 15px; color: var(--ink-soft, #3a4560);
+  }
+  .panel-body { padding: 16px; }
+  .panel-sub { font-size: 12px; color: var(--text-soft); margin-bottom: 12px; line-height: 1.5; }
+
+  form.inline-form { display: grid; gap: 10px; }
+  form.inline-form.cols-2 { grid-template-columns: 1fr 1fr; }
+  form.inline-form .full { grid-column: 1 / -1; }
+
+  label.field {
+    display: flex; flex-direction: column; gap: 4px;
+    font-size: 11px; font-weight: 500; color: var(--text-soft);
+    letter-spacing: 0.03em; text-transform: uppercase;
+  }
+  label.field input, label.field select {
+    font-family: inherit; font-size: 13px; padding: 8px 10px;
+    border: 1px solid var(--rule); border-radius: 4px; background: #fdfcf7;
+    color: var(--ink); text-transform: none; letter-spacing: 0;
+  }
+  label.field input:focus, label.field select:focus {
+    outline: none; border-color: var(--ink); background: #fff;
+    box-shadow: 0 0 0 3px rgba(26,37,64,0.08);
+  }
+  label.field input[type="file"] {
+    padding: 6px 8px; background: #fff;
+  }
+
+  button.primary {
+    background: var(--ink); color: var(--paper); border: 0;
+    padding: 9px 18px; border-radius: 5px; font-family: inherit;
+    font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 0.02em;
+    justify-self: start;
+  }
+  button.primary:hover { background: var(--slate); }
+  button.secondary {
+    background: #fff; color: var(--ink); border: 1px solid var(--rule);
+    padding: 6px 12px; border-radius: 4px; font-family: inherit;
+    font-size: 12px; font-weight: 500; cursor: pointer;
+  }
+  button.secondary:hover { border-color: var(--ink); background: var(--bone); }
+
+  table.users {
+    width: 100%; border-collapse: collapse; font-size: 12.5px;
+  }
+  table.users th, table.users td {
+    text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule);
+    vertical-align: middle;
+  }
+  table.users th {
+    font-weight: 600; color: var(--text-soft); text-transform: uppercase;
+    font-size: 10.5px; letter-spacing: 0.04em; background: #f6f2e6;
+  }
+  table.users tr:last-child td { border-bottom: none; }
+  table.users .username { font-weight: 600; color: var(--ink); }
+  table.users .village { color: var(--ink); }
+  table.users .meta { color: var(--text-soft); font-size: 11.5px; }
+  table.users .sheet-id {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px; color: var(--text-soft); user-select: all;
+  }
+  table.users .role-chip {
+    display: inline-block; font-size: 10.5px; padding: 2px 7px;
+    border-radius: 10px; font-weight: 600; letter-spacing: 0.03em;
+  }
+  table.users .role-chip.admin  { background: #f0e7d0; color: #7a5f00; }
+  table.users .role-chip.editor { background: #e4ecf5; color: #1a2540; }
+  table.users .role-chip.viewer { background: var(--bone); color: var(--text-soft); }
+  .empty-state {
+    text-align: center; padding: 24px; font-style: italic; color: var(--text-soft);
+    font-size: 12.5px;
+  }
+
+  .hash-out {
+    margin-top: 10px; padding: 10px 12px; background: var(--bone);
+    border: 1px solid var(--rule); border-radius: 5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11.5px; color: var(--ink); word-break: break-all; user-select: all;
+    display: none;
+  }
+  .hash-out.show { display: block; }
+
+  details.help {
+    background: var(--warn-soft); border: 1px solid #e8d990;
+    border-radius: 5px; padding: 10px 14px; font-size: 12.5px;
+    color: #5a4700; margin-top: 10px;
+  }
+  details.help summary { cursor: pointer; font-weight: 600; }
+  details.help ol { padding-left: 20px; margin-top: 8px; line-height: 1.6; }
+  details.help code {
+    background: #fff; padding: 1px 5px; border-radius: 3px; font-size: 11.5px;
+    user-select: all;
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">Patwari Toolkit</span>
+    <span class="brand-sub">Admin</span>
+  </div>
+  <div class="user-area">
+    <span><span class="label">Signed in as</span> <strong>{{ username }}</strong></span>
+    <a href="/logout">Logout</a>
+  </div>
+</header>
+
+<div class="page">
+
+  <h1>Admin dashboard</h1>
+  <p class="page-sub">Add villages, add users, rotate PINs — all without touching the terminal.</p>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flashes">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="svc-banner">
+    <strong>Service account:</strong>
+    <code>{{ service_account_email }}</code>
+    &nbsp;·&nbsp;
+    <strong>Users sheet:</strong>
+    {% if master_sheet_id %}
+      <code>{{ master_sheet_id }}</code>
+    {% else %}
+      <span style="color:var(--danger);">not configured — set MASTER_USERS_SHEET_ID in Render env vars</span>
+    {% endif %}
+    <br>
+    Share every village sheet (and the Users sheet) with the service-account email as Editor.
+  </div>
+
+  <!-- ========= 1. MIGRATE A VILLAGE ========= -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Migrate a Village</h2>
+      <span class="ur">موضع درآمد</span>
+    </div>
+    <div class="panel-body">
+      <p class="panel-sub">
+        Upload a ZALPORA-format Excel and the ID of its target Google Sheet.
+        The sheet's six tabs (Khewats, Khatas, Khasras, Portions, Mutations,
+        _Meta) will be <strong>overwritten</strong>. The target sheet must
+        already be shared with the service account as Editor.
+      </p>
+      <form method="post" action="/admin/migrate" enctype="multipart/form-data" class="inline-form cols-2">
+        <label class="field full">
+          Zalpora Excel (.xlsx)
+          <input type="file" name="xlsx" accept=".xlsx" required />
+        </label>
+        <label class="field full">
+          Target Google Sheet ID
+          <input type="text" name="sheet_id" placeholder="1AbCdEf...XyZ" required />
+        </label>
+        <div class="full">
+          <button type="submit" class="primary">⇪ Migrate</button>
+        </div>
+      </form>
+      <details class="help">
+        <summary>Where do I get the sheet ID?</summary>
+        <ol>
+          <li>Create a blank Google Sheet (name it e.g. "Jamabandi — Zalpora").</li>
+          <li>Click <strong>Share</strong>, add <code>{{ service_account_email }}</code> as <strong>Editor</strong>, uncheck "Notify people", Share.</li>
+          <li>Copy the long string from the URL between <code>/d/</code> and <code>/edit</code>. That's the ID.</li>
+        </ol>
+      </details>
+    </div>
+  </section>
+
+  <!-- ========= 2. ADD A USER ========= -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Add a User</h2>
+      <span class="ur">صارف شامل کریں</span>
+    </div>
+    <div class="panel-body">
+      <p class="panel-sub">
+        Appends a row to the Users sheet. PINs are bcrypt-hashed before writing.
+        Sync PIN is optional for Stage 1 (used in Stage 3's write-back flow).
+      </p>
+      <form method="post" action="/admin/users/add" class="inline-form cols-2">
+        <label class="field">
+          Username
+          <input type="text" name="username" placeholder="patwari_zalpora" required autocomplete="off" />
+        </label>
+        <label class="field">
+          Village name (shown in the UI)
+          <input type="text" name="village" placeholder="Zalpora" required />
+        </label>
+        <label class="field">
+          Login PIN
+          <input type="text" name="pin" required autocomplete="new-password" />
+        </label>
+        <label class="field">
+          Sync PIN <span style="text-transform:none;color:var(--text-soft);font-weight:400;">(optional)</span>
+          <input type="text" name="sync_pin" autocomplete="new-password" />
+        </label>
+        <label class="field full">
+          Village Google Sheet ID
+          <input type="text" name="sheet_id" placeholder="1AbCdEf...XyZ" required />
+        </label>
+        <label class="field">
+          Role
+          <select name="role">
+            <option value="editor" selected>editor</option>
+            <option value="viewer">viewer</option>
+          </select>
+        </label>
+        <div class="full">
+          <button type="submit" class="primary">+ Add user</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ========= 3. CURRENT USERS ========= -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Current Users</h2>
+      <span class="ur">موجودہ صارفین</span>
+    </div>
+    <div class="panel-body">
+      {% if users %}
+        <table class="users">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Village</th>
+              <th>Sheet ID</th>
+              <th>Role</th>
+              <th>Rotate login PIN</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+              <tr>
+                <td class="username">{{ u.username }}</td>
+                <td class="village">{{ u.village }}</td>
+                <td class="sheet-id">{{ u.sheet_id[:16] }}{% if u.sheet_id|length > 16 %}…{% endif %}</td>
+                <td>
+                  <span class="role-chip {{ u.role }}">{{ u.role }}</span>
+                </td>
+                <td>
+                  <form method="post" action="/admin/users/update" style="display:flex;gap:4px;align-items:center;">
+                    <input type="hidden" name="username" value="{{ u.username }}">
+                    <input type="hidden" name="action" value="rotate_pin">
+                    <input type="text" name="new_pin" placeholder="new PIN" required
+                      style="font-size:12px;padding:5px 8px;border:1px solid var(--rule);border-radius:3px;width:120px;">
+                    <button type="submit" class="secondary">Rotate</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="empty-state">
+          No regular users yet. Add one above — then they can log in and start building Jamabandi extracts for their village.
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ========= 4. HASH A PIN (standalone utility) ========= -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Hash a PIN</h2>
+      <span class="ur">پن ہیش</span>
+    </div>
+    <div class="panel-body">
+      <p class="panel-sub">
+        Rarely needed — "Add a User" already hashes PINs. Use this if you want
+        to edit the Users sheet directly in Google Sheets and paste the hash
+        into a cell by hand.
+      </p>
+      <form id="hashForm" class="inline-form cols-2">
+        <label class="field full">
+          Plaintext PIN
+          <input type="text" id="hashPin" required autocomplete="off" />
+        </label>
+        <div class="full">
+          <button type="submit" class="primary">Hash</button>
+        </div>
+      </form>
+      <div id="hashOut" class="hash-out"></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const form = document.getElementById('hashForm');
+  const out  = document.getElementById('hashOut');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const pin = document.getElementById('hashPin').value;
+    const body = new URLSearchParams({ pin });
+    try {
+      const resp = await fetch('/admin/hash', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body
+      });
+      const data = await resp.json();
+      if (data.hash) {
+        out.textContent = data.hash;
+        out.classList.add('show');
+      } else {
+        out.textContent = 'Error: ' + (data.error || 'unknown');
+        out.classList.add('show');
+      }
+    } catch (err) {
+      out.textContent = 'Network error: ' + err.message;
+      out.classList.add('show');
+    }
+  });
+</script>
+
+</body>
+</html>
